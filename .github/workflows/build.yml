@@ -1,0 +1,104 @@
+name: Build and Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version number (e.g., 2.8)'
+        required: true
+        type: string
+
+permissions: {}
+
+jobs:
+  build:
+    runs-on: windows-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set version
+        shell: pwsh
+        run: |
+          $file = "src/AssemblyInfo.fs"
+          $content = Get-Content $file -Raw
+          $version = "${{ inputs.version }}"
+          $fullVersion = $version
+          while (($fullVersion.Split('.')).Count -lt 4) { $fullVersion += ".0" }
+
+          Write-Host "Setting version to $fullVersion"
+
+          # Update AssemblyVersion and AssemblyFileVersion
+          $content = $content -replace 'AssemblyVersion\("\d+\.\d+\.\d+\.\d+"\)', "AssemblyVersion(`"$fullVersion`")"
+          $content = $content -replace 'AssemblyFileVersion\("\d+\.\d+\.\d+\.\d+"\)', "AssemblyFileVersion(`"$fullVersion`")"
+
+          Set-Content $file $content -NoNewline
+
+          # Set output for later steps
+          echo "VERSION=$version" >> $env:GITHUB_ENV
+
+      - name: Setup MSVC
+        uses: ilammy/msvc-dev-cmd@0b201ec74fa43914dc39ae48a89fd1d8cb592756 # v1
+
+      - name: Compile resource
+        run: rc res/AppIcon.rc
+
+      - name: Build
+        run: msbuild tpkb.fsproj -p:Configuration=Release -p:Platform=AnyCPU -restore
+
+      - name: Commit version
+        shell: pwsh
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add src/AssemblyInfo.fs
+          $status = git status --porcelain
+          if ($status) {
+            git commit -m "Release v$env:VERSION"
+            git push
+          }
+
+      - name: Prepare release files
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Path dist
+          Copy-Item "build/tpkb.exe" "dist/"
+          Copy-Item "build/FSharp.Core.dll" "dist/"
+          Copy-Item "LICENSE.txt" "dist/"
+          Copy-Item "README.md" "dist/"
+          Compress-Archive -Path "dist/*" -DestinationPath "tpkb-v${{ env.VERSION }}.zip"
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@a06a81a03ee405af7f2048a818ed3f03bbf83c7b # v2
+        with:
+          tag_name: v${{ env.VERSION }}
+          name: tpkb v${{ env.VERSION }}
+          body: |
+            ## tpkb v${{ env.VERSION }}
+
+            ## Installation
+
+            1. Extract the zip file to any folder
+            2. Run `tpkb.exe`
+            3. The app runs in the system tray
+
+            ## Requirements
+
+            - Windows 10/11
+            - .NET Framework 4.8.1 (included in Windows 10 21H2+ and Windows 11)
+          files: tpkb-v${{ env.VERSION }}.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        with:
+          name: tpkb-v${{ env.VERSION }}
+          path: |
+            build/tpkb.exe
+            build/FSharp.Core.dll

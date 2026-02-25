@@ -11,7 +11,6 @@
 module LocaleData
 
 (*
- * Copyright (c) 2016-2021 Yuki Ono
  * Copyright (c) 2026 Li Ruijie
  * Licensed under the MIT License.
  *)

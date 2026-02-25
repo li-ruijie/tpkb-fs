@@ -5,7 +5,6 @@
 namespace TestHook.AssemblyInfo
 
 (*
- * Copyright (c) 2016-2021 Yuki Ono
  * Copyright (c) 2026 Li Ruijie
  * Licensed under the MIT License.
  *)
@@ -20,7 +19,7 @@ open System.Runtime.InteropServices
 [<assembly: AssemblyConfiguration("")>]
 [<assembly: AssemblyCompany("")>]
 [<assembly: AssemblyProduct("W10Wheel.NET")>]
-[<assembly: AssemblyCopyright("Copyright (c) 2016 Yuki Ono")>]
+[<assembly: AssemblyCopyright("Copyright (c) 2026 Li Ruijie")>]
 [<assembly: AssemblyTrademark("")>]
 [<assembly: AssemblyCulture("")>]
 
@@ -33,8 +32,8 @@ open System.Runtime.InteropServices
 // Version format: Major.Minor.Build.Revision
 // Update these values when releasing a new version using release.bat
 // AppDef.fs reads Major.Minor.Build at runtime for UI display
-[<assembly: AssemblyVersion("2.8.0.0")>]
-[<assembly: AssemblyFileVersion("2.8.0.0")>]
+[<assembly: AssemblyVersion("2.8.1.0")>]
+[<assembly: AssemblyFileVersion("2.8.1.0")>]
 
 // Required empty do block for F# assembly-level attributes
 do

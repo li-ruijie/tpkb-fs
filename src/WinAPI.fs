@@ -13,7 +13,7 @@ module WinAPI
 
 (*
  * Copyright (c) 2026 Li Ruijie
- * Licensed under the MIT License.
+ * Licensed under the GNU General Public License v3.0.
  *)
 
 #nowarn "9"  // Suppress "Uses of this construct may result in the generation of unverifiable .NET IL code"

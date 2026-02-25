@@ -233,7 +233,7 @@ Original upstream release by Yuki Ono.
 
 ## License
 
-The MIT License
+GPL-3.0
 
 ## Credits
 

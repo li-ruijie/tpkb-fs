@@ -58,8 +58,8 @@
   </Choose>
   <Import Project="$(FSharpTargetsPath)" />
   <ItemGroup>
-    <EmbeddedResource Include="res\TrayIcon-Run.ico" />
-    <EmbeddedResource Include="res\TrayIcon-Stop.ico" />
+    <EmbeddedResource Include="res\icon-run.ico" />
+    <EmbeddedResource Include="res\icon-stop.ico" />
     <Compile Include="src\AppDef.fs" />
     <Compile Include="src\AssemblyInfo.fs" />
     <Compile Include="src\DataID.fs" />

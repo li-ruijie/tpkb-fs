@@ -23,7 +23,7 @@ module Ctx
 
 (*
  * Copyright (c) 2026 Li Ruijie
- * Licensed under the MIT License.
+ * Licensed under the GNU General Public License v3.0.
  *)
 
 open System
@@ -37,8 +37,8 @@ open System.Collections.Generic
 open Mouse
 open Keyboard
 
-let private ICON_RUN_NAME = "TrayIcon-Run.ico"
-let private ICON_STOP_NAME = "TrayIcon-Stop.ico"
+let private ICON_RUN_NAME = "icon-run.ico"
+let private ICON_STOP_NAME = "icon-stop.ico"
 
 let private selectedProperties: string ref = ref Properties.DEFAULT_DEF
 

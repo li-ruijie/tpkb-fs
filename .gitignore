@@ -1,7 +1,28 @@
+# Build output
+bin/
+obj/
+packages/
+
+# IDE
+.vs/
 *.suo
 *.user
 *.sln.docstates
 
-.vs
-W10Wheel/bin/
-W10Wheel/obj/
+# Helper
+.asst/
+.claude/
+.devc-scripts/
+.devcontainer/
+AGENTS.md
+
+# Vim
+*.swo
+*.swp
+*.un~
+*~
+.vbak
+
+# Windows
+desktop.ini
+Thumbs.db

@@ -18,5 +18,5 @@ if not exist "%FSHARP_TOOLS%\Microsoft.IO.Redist.dll" (
     set "FSC_TOOL_PATH=/p:FscToolPath=%TEMP_FSC%"
 )
 
-"%MSBUILD%" "%~dp0W10Wheel\W10Wheel.fsproj" /t:Restore /v:minimal
-"%MSBUILD%" "%~dp0W10Wheel\W10Wheel.fsproj" /t:Build /p:Configuration=%CONFIG% /v:minimal %FSC_TOOL_PATH%
+"%MSBUILD%" "%~dp0W10Wheel.fsproj" /t:Restore /v:minimal
+"%MSBUILD%" "%~dp0W10Wheel.fsproj" /t:Build /p:Configuration=%CONFIG% /v:minimal %FSC_TOOL_PATH%

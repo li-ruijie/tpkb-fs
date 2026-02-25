@@ -13,7 +13,7 @@
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <TargetFSharpCoreVersion>4.4.1.0</TargetFSharpCoreVersion>
     <Name>W10Wheel</Name>
-    <Win32Resource>icon\AppIcon.res</Win32Resource>
+    <Win32Resource>res\AppIcon.res</Win32Resource>
     <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -58,8 +58,8 @@
   </Choose>
   <Import Project="$(FSharpTargetsPath)" />
   <ItemGroup>
-    <EmbeddedResource Include="icon\TrayIcon-Run.ico" />
-    <EmbeddedResource Include="icon\TrayIcon-Stop.ico" />
+    <EmbeddedResource Include="res\TrayIcon-Run.ico" />
+    <EmbeddedResource Include="res\TrayIcon-Stop.ico" />
     <Compile Include="src\AppDef.fs" />
     <Compile Include="src\AssemblyInfo.fs" />
     <Compile Include="src\DataID.fs" />

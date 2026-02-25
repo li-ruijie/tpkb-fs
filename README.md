@@ -210,7 +210,7 @@ targeting pack.
 build.bat [Debug|Release]
 ```
 
-Output: `W10Wheel\bin\Release\W10Wheel.exe`
+Output: `bin\Release\W10Wheel.exe`
 
 ## Version History
 

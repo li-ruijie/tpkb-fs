@@ -1467,7 +1467,7 @@ let private createPropertiesMenu () =
         addItem (createSavePropertiesMenuItem())
         addSeparator items
 
-        addItem (createOpenDirMenuItem(Properties.USER_DIR))
+        addItem (createOpenDirMenuItem(Properties.CONFIG_DIR))
         addItem (createAddPropertiesMenuItem())
         addItem (createDeletePropertiesMenuItem())
         addSeparator items

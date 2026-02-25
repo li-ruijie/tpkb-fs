@@ -126,15 +126,15 @@ type Properties() =
 
         
 let USER_DIR = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile)
-let PROGRAM_NAME = AppDef.PROGRAM_NAME
-let PROP_NAME = (sprintf ".%s" PROGRAM_NAME)
-let PROP_EXT = "properties"
-let DEFAULT_PROP_NAME = (sprintf "%s.%s" PROP_NAME PROP_EXT)
+let CONFIG_DIR = Path.Combine(USER_DIR, ".config", "w10wheel")
+let PROP_BASE = "w10wheel"
+let PROP_EXT = "conf"
+let DEFAULT_PROP_NAME = (sprintf "%s.%s" PROP_BASE PROP_EXT)
 let DEFAULT_DEF = "Default"
 
-let private BAD_DEFAULT_NAME = (sprintf "%s.%s.%s" PROP_NAME DEFAULT_DEF PROP_EXT)
+let private BAD_DEFAULT_NAME = (sprintf "%s.%s.%s" PROP_BASE DEFAULT_DEF PROP_EXT)
 
-let private userDefRegex = new Regex(sprintf "^\.%s\.(?!--)(.+)\.%s$" PROGRAM_NAME PROP_EXT)
+let private userDefRegex = new Regex(sprintf "^%s\.(?!--)(.+)\.%s$" PROP_BASE PROP_EXT)
 
 let private isPropFile (path:String): bool =
     let name = Path.GetFileName(path)
@@ -144,17 +144,24 @@ let getUserDefName (path:String): string =
     let name = Path.GetFileName(path)
     userDefRegex.Match(name).Groups.[1].Value
 
+let private ensureConfigDir () =
+    if not (Directory.Exists(CONFIG_DIR)) then
+        Directory.CreateDirectory(CONFIG_DIR) |> ignore
+
 let getPropFiles (): string[] =
-    Directory.GetFiles(USER_DIR) |> Array.filter isPropFile 
+    ensureConfigDir()
+    Directory.GetFiles(CONFIG_DIR) |> Array.filter isPropFile
 
 let getDefaultPath (): string =
-    Path.Combine(USER_DIR, DEFAULT_PROP_NAME)
+    ensureConfigDir()
+    Path.Combine(CONFIG_DIR, DEFAULT_PROP_NAME)
 
 let getPath (name:string): string =
+    ensureConfigDir()
     if name = "Default" then
         getDefaultPath()
     else
-        Path.Combine(USER_DIR, (sprintf "%s.%s.%s" PROP_NAME name PROP_EXT))
+        Path.Combine(CONFIG_DIR, (sprintf "%s.%s.%s" PROP_BASE name PROP_EXT))
 
 let exists (name:string): bool =
     File.Exists(getPath name)

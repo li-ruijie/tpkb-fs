@@ -45,9 +45,9 @@ W10Wheel.exe MyProfile            # Start with "MyProfile" properties
 
 ## Settings
 
-Settings are stored in `.W10Wheel.properties` in the user profile directory (`%USERPROFILE%`).
+Settings are stored in `%USERPROFILE%\.config\w10wheel\w10wheel.conf`.
 
-Named profiles are stored as `.W10Wheel.<name>.properties`.
+Named profiles are stored as `w10wheel.<name>.conf` in the same directory.
 
 ### Trigger Settings
 
@@ -203,11 +203,14 @@ uiLanguage=en
 
 ## Building
 
+Requires VS 2026 Build Tools with the F# compiler and .NET Framework 4.8.1
+targeting pack.
+
 ```
-msbuild W10Wheel.sln /p:Configuration=Release
+build.bat [Debug|Release]
 ```
 
-Output: `W10Wheel/bin/Release/W10Wheel.exe`
+Output: `W10Wheel\bin\Release\W10Wheel.exe`
 
 ## Version History
 

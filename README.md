@@ -4,6 +4,8 @@
   <img src="art/icon-run.png" width="128">
 </p>
 
+[![Build](https://github.com/li-ruijie/tpkb-fs/actions/workflows/build.yml/badge.svg)](https://github.com/li-ruijie/tpkb-fs/actions/workflows/build.yml)
+
 TrackPoint keyboard helper for Windows. Converts TrackPoint mouse button presses or drags into scroll wheel events, and provides fine-grained control over keyboard repeat rates beyond what Windows settings allow. Runs as a system tray application.
 
 Also available as a [pure C version](https://github.com/li-ruijie/tpkb).

@@ -32,8 +32,8 @@ open System.Runtime.InteropServices
 // Version format: Major.Minor.Build.Revision
 // Update these values when releasing a new version using release.bat
 // AppDef.fs reads Major.Minor.Build at runtime for UI display
-[<assembly: AssemblyVersion("3.0.0.0")>]
-[<assembly: AssemblyFileVersion("3.0.0.0")>]
+[<assembly: AssemblyVersion("3.0.1.0")>]
+[<assembly: AssemblyFileVersion("3.0.1.0")>]
 
 // Required empty do block for F# assembly-level attributes
 do

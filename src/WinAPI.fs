@@ -19,7 +19,6 @@ module WinAPI
 #nowarn "9"  // Suppress "Uses of this construct may result in the generation of unverifiable .NET IL code"
 
 open System
-open System.Reflection
 open System.Runtime.InteropServices
 
 // ============================================================================
@@ -83,24 +82,6 @@ type MOUSEINPUT =
     val dwExtraInfo : unativeint
 
     new(x, y, data, flags, _time, info) = {dx = x; dy = y; mouseData = data; dwFlags = flags; time = _time; dwExtraInfo = info}
-
-// https://msdn.microsoft.com/library/ms646271.aspx
-// http://pinvoke.net/default.aspx/Structures/KEYBDINPUT.html
-/// Keyboard input structure for SendInput API (not currently used).
-[<Struct; StructLayout(LayoutKind.Sequential)>]
-type KEYBDINPUT =
-    val wVk         : int16
-    val wScan       : int16
-    val dwFlags     : uint32
-    val time        : uint32
-    val dwExtraInfo : unativeint
-
-/// Hardware input structure for SendInput API (not currently used).
-[<Struct; StructLayout(LayoutKind.Sequential)>]
-type HARDWAREINPUT =
-    val uMsg    : int32
-    val wParamL : int16
-    val wParamH : int16
 
 /// Wrapper for INPUT structure used by SendInput.
 /// Type 0 = mouse input. Contains MOUSEINPUT union member.
@@ -168,9 +149,6 @@ let WH_KEYBOARD_LL = 13
 
 /// Hook type for low-level mouse hook
 let WH_MOUSE_LL = 14
-
-/// Standard wheel delta for one notch of rotation
-let WHEEL_DELTA = 120
 
 // X button identifiers (high-order word of mouseData)
 let XBUTTON1 = 0x0001  // Back button
@@ -268,14 +246,6 @@ extern uint32 SendInput(uint32 nInputs,
 /// SendInput via native pointer (avoids managed array marshalling overhead).
 [<DllImport("user32.dll", SetLastError = true, EntryPoint = "SendInput")>]
 extern uint32 SendInputNative(uint32 nInputs, nativeint pInputs, int cbSize)
-
-/// Legacy mouse input function (not used, prefer SendInput).
-[<DllImport("user32.dll", SetLastError = true)>]
-extern void mouse_event(int32 dwFlags, int32 dx, int32 dy, int32 dwData, unativeint dwExtraInfo)
-
-/// Gets extra info associated with the current input message.
-[<DllImport("user32.dll", SetLastError = false)>]
-extern nativeint GetMessageExtraInfo()
 
 // ============================================================================
 // Virtual Key Codes - For detecting modifier key states
@@ -441,14 +411,6 @@ extern uint32 GetRawInputData([<In>]nativeint hRawInput, [<In>]uint32 uiCommand,
 // P/Invoke Declarations - Window/Process Information
 // ============================================================================
 
-/// Gets the window handle at the specified screen coordinates.
-[<DllImport("user32.dll", SetLastError = true)>]
-extern nativeint WindowFromPoint(POINT point)
-
-/// Gets the thread and process ID for a window.
-[<DllImport("user32.dll", SetLastError = true)>]
-extern uint32 GetWindowThreadProcessId(nativeint hWnd, [<Out>]uint32& lpdwProcessId)
-
 /// Opens a process handle for querying information.
 [<DllImport("kernel32.dll")>]
 extern nativeint OpenProcess(uint32 dwDesiredAccess, bool bInheritHandle, uint32 dwProcessId)
@@ -457,25 +419,9 @@ extern nativeint OpenProcess(uint32 dwDesiredAccess, bool bInheritHandle, uint32
 [<DllImport("kernel32.dll")>]
 extern bool CloseHandle(nativeint handle)
 
-/// Gets the base name of a module (not currently used).
-[<DllImport("psapi.dll", CharSet = CharSet.Ansi)>]
-extern uint32 GetModuleBaseName(nativeint hWnd, nativeint hModule, [<MarshalAs(UnmanagedType.LPStr); Out>] System.Text.StringBuilder lpBaseName, uint32 nSize)
-
-/// Gets the full path of a module (not currently used).
-[<DllImport("psapi.dll")>]
-extern uint32 GetModuleFileNameEx(nativeint hProcess, nativeint hModule, [<Out>] System.Text.StringBuilder lpBaseName, [<In>] [<MarshalAs(UnmanagedType.U4)>] int32 nSize)
-
 /// Gets the full path of the executable for a process.
 [<DllImport("kernel32.dll", SetLastError=true)>]
 extern bool QueryFullProcessImageName([<In>]nativeint hProcess, [<In>]int32 dwFlags, [<Out>]System.Text.StringBuilder lpExeName, int32& lpdwSize)
-
-/// Gets the handle of the currently active foreground window.
-[<DllImport("user32.dll")>]
-extern nativeint GetForegroundWindow()
-
-/// Gets the current cursor position in screen coordinates.
-[<DllImport("user32.dll", SetLastError = true)>]
-extern [<MarshalAs(UnmanagedType.Bool)>] bool GetCursorPos(POINT& lpPoint);
 
 /// Registers a system-wide window message string, returning its unique ID.
 [<DllImport("user32.dll", CharSet = CharSet.Unicode, SetLastError = true)>]
@@ -489,10 +435,6 @@ extern bool PostMessageW(nativeint hWnd, uint32 Msg, nativeint wParam, nativeint
 /// Use nativeint -4 for DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2.
 [<DllImport("user32.dll")>]
 extern bool SetProcessDpiAwarenessContext(nativeint value)
-
-/// Sends a message to a window. Used for BCM_SETSHIELD (0x160C) on buttons.
-[<DllImport("user32.dll", CharSet = CharSet.Auto)>]
-extern nativeint SendMessageW(nativeint hWnd, uint32 Msg, nativeint wParam, nativeint lParam)
 
 /// Opens the access token for a process.
 [<DllImport("advapi32.dll", SetLastError = true)>]

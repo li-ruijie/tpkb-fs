@@ -155,14 +155,10 @@ let private noneUp (ke: KeyboardEvent): nativeint =
     getResult checkers ke
 
 let keyDown (info: KHookInfo) =
-    //Debug.WriteLine(sprintf "keyDown: %d" info.vkCode)
-
     let kd = KeyDown(info)
     if Ctx.isTriggerKey kd then singleDown kd else noneDown kd
 
 let keyUp (info: KHookInfo) =
-    //Debug.WriteLine(sprintf "keyUp: %d" info.vkCode)
-
     let ku = KeyUp(info)
     if Ctx.isTriggerKey ku then singleUp ku else noneUp ku
 

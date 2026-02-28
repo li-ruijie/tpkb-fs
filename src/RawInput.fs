@@ -25,8 +25,6 @@ open System
 open System.Diagnostics
 open System.Runtime.InteropServices
 open System.Windows.Forms
-open System.Threading
-open System.ComponentModel
 open Microsoft.FSharp.NativeInterop
 
 open WinAPI.RawInput

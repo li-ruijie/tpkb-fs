@@ -127,20 +127,11 @@ let setShowSettings (f: unit -> unit) = showSettings <- f
 let getDragThreshold () =
     Volatile.Read(dragThreshold)
 
-let getHookHealthCheck () =
-    Volatile.Read(hookHealthCheck)
-
-let isKeyboardHook () =
-    Volatile.Read(keyboardHook)
-
 let getTargetVKCode () =
     Volatile.Read(targetVKCode)
 
 let isTriggerKey (ke: KeyboardEvent) =
     ke.VKCode = getTargetVKCode()
-
-let isNoneTriggerKey () =
-    getTargetVKCode() = 0
 
 let isSendMiddleClick () =
     Volatile.Read(sendMiddleClick)
@@ -281,9 +272,6 @@ let isDoubleTrigger () =
 
 let isDragTrigger () =
     getFirstTrigger().IsDrag
-
-let isNoneTrigger () =
-    getFirstTrigger().IsNone
 
 type private Threshold() =
     [<VolatileField>] static let mutable vertical = 0
@@ -450,7 +438,6 @@ let startScrollModeK (info: KHookInfo) = Scroll.Start info
 let exitScrollMode (): unit = Scroll.Exit()
 let checkExitScroll (time: uint32) = Scroll.CheckExit time
 let getScrollStartPoint () = Scroll.StartPoint
-let getScrollLockTime () = Scroll.LockTime
 let isCursorChange () = Scroll.CursorChange
 let isReverseScroll () = Scroll.Reverse
 let isHorizontalScroll () = Scroll.Horizontal
@@ -595,15 +582,7 @@ type LastFlags() =
         match down with
         | LeftDown(_) -> ldR <- false; ldS <- false; ldP <- false
         | RightDown(_) -> rdR <- false; rdS <- false; rdP <- false
-        //| MiddleDown(_) | X1Down(_) | X2Down(_) -> sdS <- false
         | _ -> raise (ArgumentException())
-
-    (*
-    static member Reset (down: KeyboardEvent) =
-        match down with
-        | KeyDown(_) -> kdS.[down.VKCode &&& 0xFF] <- false
-        | _ -> ()
-    *)
 
 let getPollTimeout () =
     Volatile.Read(pollTimeout)
@@ -782,7 +761,6 @@ let setTargetVKCode name =
 
 let private setDefaultPriority () =
     Debug.WriteLine("setDefaultPriority")
-    //ProcessPriority.setPriority(getProcessPriority())
     setPriority (getProcessPriority().Name)
 
 let private setDefaultTrigger () =

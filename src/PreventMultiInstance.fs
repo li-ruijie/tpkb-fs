@@ -41,9 +41,6 @@ let private mutex =
 /// Whether this instance currently holds the mutex.
 let mutable private locked = false
 
-/// Checks if this instance currently holds the lock.
-let isLocked (): bool = locked
-
 /// Attempts to acquire the mutex.
 /// Returns true if lock acquired successfully, false if another instance holds it.
 /// Throws InvalidOperationException if called when already locked.

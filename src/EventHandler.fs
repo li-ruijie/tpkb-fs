@@ -151,7 +151,6 @@ let private checkSameLastEvent (me: MouseEvent): nativeint option =
     if me.SameEvent lastEvent then
         debug "same last event" me
         callNextHook()
-        //suppress()
     else
         lastEvent <- me
         None
@@ -218,13 +217,6 @@ let private checkStartingScroll (up: MouseEvent): nativeint option =
     else
         None
 
-let private passSingleEvent (me: MouseEvent): nativeint option =
-    if me.IsSingle then
-        debug "pass single event" me
-        callNextHook()
-    else
-        None
-
 let private offerEventWaiter (me: MouseEvent): nativeint option =
     if EventWaiter.offer me then
         debug "success to offer" me
@@ -288,7 +280,6 @@ let private dragStart (info: HookInfo) =
     Debug.WriteLine (sprintf "dragStart: %d, %d" dragMoveX dragMoveY)
 
     let dragThreshold = Ctx.getDragThreshold()
-    //Debug.WriteLine (sprintf "dragThreshold: %d" dragThreshold)
     if dragMoveX > dragThreshold || dragMoveY > dragThreshold then
         Ctx.startScrollMode info
         dragPreScrollMode <- false
@@ -371,16 +362,6 @@ let private endNotTrigger (me: MouseEvent): nativeint option =
 let private endPass (me: MouseEvent): nativeint option =
     endCallNextHook me ("endPass: " + me.Name)
 
-let private endUnknownEvent (me: MouseEvent): nativeint option =
-    endCallNextHook me ("unknown event: " + me.Name)
-
-let private endAfterTimeoutOrMove (me: MouseEvent): nativeint option =
-    endCallNextHook me ("pass after timeout or move?: " + me.Name)
-
-let private endSuppress (me:MouseEvent) (msg:string option): nativeint option =
-    Option.iter (fun s -> Debug.WriteLine(s)) msg
-    suppress()
-
 let private endIllegalState (me: MouseEvent): nativeint option =
     debug "illegal state" me
     suppress()
@@ -396,14 +377,12 @@ let rec private getResult (cs:Checkers) (me:MouseEvent): nativeint =
     | _ -> raise (ArgumentException())
 
 let private lrDown (me: MouseEvent): nativeint =
-    //Debug.WriteLine("lrDown")
     let checkers = [
         skipResendEventLR
         checkSameLastEvent
         resetLastFlagsLR
         checkExitScrollDown
         passPressedScrollMode
-        //passSingleEvent
         offerEventWaiter
         checkTriggerWaitStart
         endNotTrigger
@@ -412,13 +391,11 @@ let private lrDown (me: MouseEvent): nativeint =
     getResult checkers me
 
 let private lrUp (me: MouseEvent): nativeint =
-    //Debug.WriteLine("lrUp")
     let checkers = [
         skipResendEventLR
         checkEscape
         skipFirstUp
         checkSameLastEvent
-        //checkSingleSuppressed
         checkPassedDown
         checkResentDown
         checkExitScrollUpLR
@@ -431,11 +408,9 @@ let private lrUp (me: MouseEvent): nativeint =
     getResult checkers me
 
 let private singleDown (me: MouseEvent): nativeint =
-    //Debug.WriteLine("singleDown")
     let checkers = [
         skipResendEventSingle
         checkSameLastEvent
-        //resetLastFlags
         checkExitScrollDown
         passNotTrigger
         checkKeySendMiddle
@@ -446,7 +421,6 @@ let private singleDown (me: MouseEvent): nativeint =
     getResult checkers me
 
 let private singleUp (me: MouseEvent): nativeint =
-    //Debug.WriteLine("singleUp")
     let checkers = [
         skipResendEventSingle
         checkEscape
@@ -461,11 +435,9 @@ let private singleUp (me: MouseEvent): nativeint =
     getResult checkers me
 
 let private dragDown (me: MouseEvent): nativeint =
-    //Debug.WriteLine("dragDown")
     let checkers = [
         skipResendEventSingle
         checkSameLastEvent
-        //resetLastFlags
         checkExitScrollDown
         passNotDragTrigger
         startScrollDrag
@@ -474,7 +446,6 @@ let private dragDown (me: MouseEvent): nativeint =
     getResult checkers me
 
 let private dragUp (me: MouseEvent): nativeint =
-    //Debug.WriteLine("dragUp")
     let checkers = [
         skipResendEventSingle
         checkEscape
@@ -489,9 +460,7 @@ let private dragUp (me: MouseEvent): nativeint =
     getResult checkers me
 
 let private noneDown (me: MouseEvent): nativeint =
-    //Debug.WriteLine("noneDown")
     let checkers = [
-        //resetLastFlags
         checkExitScrollDown
         endPass
     ]
@@ -499,7 +468,6 @@ let private noneDown (me: MouseEvent): nativeint =
     getResult checkers me
 
 let private noneUp (me: MouseEvent): nativeint =
-    //Debug.WriteLine("noneUp")
     let checkers = [
         checkEscape
         checkSuppressedDown
@@ -526,22 +494,18 @@ let private procUpS (d: MouseEvent): nativeint =
     Volatile.Read(__procUpS)(d)
 
 let leftDown (info: HookInfo) =
-    //Debug.WriteLine("LeftDown")
     let ld = LeftDown(info)
     procDownLR ld
 
 let leftUp (info: HookInfo) =
-    //Debug.WriteLine("LeftUp")
     let lu = LeftUp(info)
     procUpLR lu
     
 let rightDown(info: HookInfo) =
-    //Debug.WriteLine("RightDown")
     let rd = RightDown(info)
     procDownLR rd
 
 let rightUp (info: HookInfo) =
-    //Debug.WriteLine("RightUp")
     let ru = RightUp(info)
     procUpLR ru
 
@@ -562,10 +526,8 @@ let xUp (info: HookInfo) =
     procUpS xu
 
 let move (info: HookInfo) =
-    //Debug.WriteLine "Move: test"
     if Ctx.isScrollMode() || dragPreScrollMode then
         drag info
-        //Windows.sendWheel info.pt
         suppress().Value
     elif EventWaiter.offer (Move(info)) then
         Debug.WriteLine("success to offer: Move")

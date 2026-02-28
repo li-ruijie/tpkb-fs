@@ -22,24 +22,6 @@ let errorMessage msg title =
 let errorMessageE (e: Exception) =
     errorMessage e.Message (e.GetType().Name)
 
-/// Validates that input is a number within the specified range.
-let private isValidNumber input low up =
-    match Int32.TryParse(input)  with
-    | (true, res) -> res >= low && res <= up
-    | _ -> false
-
-/// Opens an input box for entering a number within a range.
-/// Returns Ok(number) if valid input, Error(input) if invalid or cancelled.
-/// The prompt shows the parameter name and valid range (e.g., "pollTimeout (150 - 500)").
-let openNumberInputBox name title low up cur =
-    let msg = sprintf "%s (%d - %d)" name low up
-    let dvalue = cur.ToString()
-    let input = Interaction.InputBox(msg, title, dvalue)
-    if isValidNumber input low up then
-        Ok (Int32.Parse(input))
-    else
-        Error (input)
-
 /// Opens an input box for entering text.
 /// Returns Some(text) if non-empty input, None if cancelled or empty.
 let openTextInputBox msg title: string option =

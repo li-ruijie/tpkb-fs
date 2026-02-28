@@ -70,7 +70,6 @@ let private senderThread = new Thread(fun () ->
         Marshal.FreeHGlobal(bufPtr)
 )
 
-//let private senderThread = new Thread(sender)
 senderThread.IsBackground <- true
 senderThread.Priority <- ThreadPriority.AboveNormal
 senderThread.Start()
@@ -228,21 +227,8 @@ type VHDirection =
     | Horizontal
     | NonDirection
 
-//let mutable private vhDirection: VHDirection = NonDirection
 let mutable private fixedVHD: VHDirection = NonDirection
 let mutable private latestVHD: VHDirection = NonDirection
-
-(*
-let private setVHA vha =
-    match vha with
-    | Vertical ->
-        vhDirection <- Vertical
-        if Ctx.isCursorChange() then WinCursor.changeV()
-    | Horizontal ->
-        vhDirection <- Horizontal
-        if Ctx.isCursorChange() then WinCursor.changeH()
-    | NonDirection -> ()
-*)
 
 let private changeCursorVHD vhd =
     match vhd with
@@ -251,16 +237,6 @@ let private changeCursorVHD vhd =
     | Horizontal ->
         if Ctx.isCursorChange() then WinCursor.changeH()
     | NonDirection -> ()
-
-(*
-let private setVerticalVHA () =
-    vhDirection <- Vertical
-    if Ctx.isCursorChange() then WinCursor.changeV()
-
-let private setHorizontalVHA () =
-    vhDirection <- Horizontal
-    if Ctx.isCursorChange() then WinCursor.changeH()
-*)
 
 let private getFirstVHD (adx: int) (ady: int): VHDirection =
     let mthr = Ctx.getFirstMinThreshold()
@@ -374,12 +350,6 @@ let private createClick (mc:MouseClick) =
 let resendClick (mc: MouseClick) =
     sendInputArray (createClick mc)
 
-let resendClickDU (down:MouseEvent) (up:MouseEvent) =
-    match down, up with
-    | LeftDown(_), LeftUp(_) -> resendClick(LeftClick(down.Info))
-    | RightDown(_), RightUp(_) -> resendClick(RightClick(down.Info))
-    | _ -> raise (ArgumentException())
-
 let resendDown (me: MouseEvent) =
     match me with
     | LeftDown(info) -> sendInput info.pt 0 MOUSEEVENTF_LEFTDOWN 0u resendTag
@@ -463,28 +433,3 @@ let initScroll () =
 let setInitScroll () =
     Ctx.setInitScroll initScroll
 
-let private getFullPathFromWindow (hWnd: nativeint): string option =
-    if hWnd = IntPtr.Zero then
-        None
-    else
-        let mutable processId = 0u
-        let _ = WinAPI.GetWindowThreadProcessId(hWnd, &processId)
-        let hProcess = WinAPI.OpenProcess(0x1000u, false, processId)
-        if hProcess = IntPtr.Zero then
-            None
-        else
-            let buffer = System.Text.StringBuilder(1024);
-            let mutable bufferSize = buffer.Capacity;
-            let success = WinAPI.QueryFullProcessImageName(hProcess, 0, buffer, &bufferSize)
-            WinAPI.CloseHandle(hProcess) |> ignore
-            if success then Some(buffer.ToString()) else None
-
-let getFullPathFromForegroundWindow (): string option =
-    getFullPathFromWindow (WinAPI.GetForegroundWindow())
-
-let getFullPathFromPoint (pt: WinAPI.POINT): string option =
-    getFullPathFromWindow (WinAPI.WindowFromPoint(pt))
-
-let getFullPathFromCursorPos (): string option =
-    let mutable pt = WinAPI.POINT()
-    if WinAPI.GetCursorPos(&pt) then getFullPathFromPoint(pt) else None

@@ -196,9 +196,6 @@ type Trigger =
 let isXButton1 (mouseData: uint32) =
     (mouseData >>> 16) = (uint32 WinAPI.XBUTTON1)
 
-let isXButton2 (mouseData: uint32) =
-    not (isXButton1 mouseData)
-
 let getTrigger = function
     | LeftEvent(_) -> LeftTrigger
     | RightEvent(_) -> RightTrigger

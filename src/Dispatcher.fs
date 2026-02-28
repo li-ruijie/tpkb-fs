@@ -25,7 +25,6 @@ module Dispatcher
 open System
 open System.Diagnostics
 open System.Runtime.InteropServices
-open System.Threading
 open System.Windows.Forms
 open WinAPI.Message
 

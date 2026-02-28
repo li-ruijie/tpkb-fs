@@ -93,7 +93,6 @@ type private SynchronousQueue() =
 
 let private THREAD_PRIORITY = ThreadPriority.AboveNormal
 
-//let private waiting = ref false
 let private waitingEvent: MouseEvent ref = ref NonEvent
 
 let private sync = new SynchronousQueue()
@@ -104,7 +103,6 @@ let private setFlagsOffer me =
     | Move(_) ->
         Debug.WriteLine(sprintf "setFlagsOffer - setResent (Move): %s" we.Name)
         Ctx.LastFlags.SetResent we
-        //Thread.Sleep(0)
     | LeftUp(_) | RightUp(_) ->
         Debug.WriteLine(sprintf "setFlagsOffer - setResent (Up): %s" we.Name)
         Ctx.LastFlags.SetResent we
@@ -127,13 +125,10 @@ let setOfferEW () =
     Ctx.setOfferEW offer
 
 let private fromMove (down: MouseEvent) =
-    //Ctx.LastFlags.SetResent down
     Debug.WriteLine(sprintf "wait Trigger (%s -->> Move): resend %s" down.Name down.Name)
     Windows.resendDown down
 
 let private fromUp (down:MouseEvent) (up:MouseEvent) =
-    //Ctx.LastFlags.SetResent down
-
     let resendC (mc: MouseClick) =
         Debug.WriteLine(sprintf "wait Trigger (%s -->> %s): resend %s" down.Name up.Name mc.Name)
         Windows.resendClick mc
@@ -161,9 +156,6 @@ let private fromUp (down:MouseEvent) (up:MouseEvent) =
     | _ -> raise (InvalidOperationException())
 
 let private fromDown (d1:MouseEvent) (d2:MouseEvent) =
-    //Ctx.LastFlags.SetSuppressed d1
-    //Ctx.LastFlags.SetSuppressed d2
-
     Debug.WriteLine(sprintf "wait Trigger (%s -->> %s): start scroll mode" d1.Name d2.Name)
     Ctx.startScrollMode d2.Info
 
@@ -194,8 +186,7 @@ let private waiterThread = new Thread(fun () ->
         | :? ObjectDisposedException -> () // Queue disposed during shutdown
         | e -> Debug.WriteLine(sprintf "waiterThread error: %s" e.Message)
 )
-        
-//let private waiterThread = new Thread(waiter)
+
 waiterThread.IsBackground <- true
 waiterThread.Priority <- THREAD_PRIORITY
 waiterThread.Start()

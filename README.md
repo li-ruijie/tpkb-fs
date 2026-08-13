@@ -166,7 +166,7 @@ Output: `build\tpkb.exe`
 
 ## License
 
-GPL-3.0
+AGPL-3.0
 
 ## Credits
 

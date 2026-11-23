@@ -108,6 +108,6 @@ jobs:
         with:
           name: tpkb-v${{ env.VERSION }}
           path: |
-          retention-days: 1
             build/tpkb.exe
             build/FSharp.Core.dll
+          retention-days: 1

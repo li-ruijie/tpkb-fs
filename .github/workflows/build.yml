@@ -22,12 +22,20 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
+      # The input reaches the script through env rather than expression
+      # interpolation, so it is never parsed as PowerShell. It is checked before
+      # it is written to GITHUB_ENV, where later steps read it.
       - name: Set version
         shell: pwsh
+        env:
+          INPUT_VERSION: ${{ inputs.version }}
         run: |
           $file = "src/AssemblyInfo.fs"
           $content = Get-Content $file -Raw
-          $version = "${{ inputs.version }}"
+          $version = $env:INPUT_VERSION
+          if ($version -notmatch '^\d+(\.\d+){0,3}\z') {
+            throw "Invalid version '$version'. Expected one to four numeric parts, e.g. 3.0.1"
+          }
           $fullVersion = $version
           while (($fullVersion.Split('.')).Count -lt 4) { $fullVersion += ".0" }
 
@@ -71,7 +79,7 @@ jobs:
           Copy-Item "build/FSharp.Core.dll" "dist/"
           Copy-Item "LICENSE.txt" "dist/"
           Copy-Item "README.md" "dist/"
-          Compress-Archive -Path "dist/*" -DestinationPath "tpkb-v${{ env.VERSION }}.zip"
+          Compress-Archive -Path "dist/*" -DestinationPath "tpkb-v$($env:VERSION).zip"
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@8a0cd651e5b2365bd640854a3fa5dfc70e4875f3 # v3.0.4
